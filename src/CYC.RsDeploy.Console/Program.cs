@@ -1,5 +1,6 @@
 ﻿using System;
 using CYC.RsDeploy.Console.Commands;
+using CYC.RsDeploy.Console.Exceptions;
 using CYC.RsDeploy.Console.Verbs;
 using NLog;
 
@@ -37,30 +38,37 @@ namespace CYC.RsDeploy.Console
                         break;
                 }
             }
+            catch (InvalidParameterException ex)
+            {
+                logger.Info(ex.InnerException, ex.Message);
+                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
+            }
             catch (Exception ex)
             {
                 logger.Error(ex);
                 Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
             }
-            
         }
 
         private static void UploadFile(object options)
         {
-            var uploadFileSubOptions = (UploadFileSubOptions)options;
-            new UploadFileVerb(uploadFileSubOptions, logger).Process(); 
+            var verbOptions = (UploadFileVerbOptions)options;
+            verbOptions.Validate();
+            new UploadFileVerb(verbOptions, logger).Process();
         }
 
         private static void UploadFolder(object options)
         {
-            var uploadFileSubOptions = (UploadFolderSubOptions)options;
-            new UploadFolderVerb(uploadFileSubOptions, logger).Process();
+            var verbOptions = (UploadFolderVerbOptions)options;
+            verbOptions.Validate();
+            new UploadFolderVerb(verbOptions, logger).Process();
         }
 
         private static void CreateDatasources(object options)
         {
-            var createDatasourcesSubOptions = (CreateDatasourcesSubOptions)options;
-            new CreateDatasourcesVerb(createDatasourcesSubOptions, logger).Process();
+            var verbOptions = (CreateDatasourcesVerbOptions)options;
+            verbOptions.Validate();
+            new CreateDatasourcesVerb(verbOptions, logger).Process();
         }
     }
 }

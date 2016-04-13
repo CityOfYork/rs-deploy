@@ -53,11 +53,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\Options.cs" />
-    <Compile Include="Commands\CreateDatasources.cs" />
-    <Compile Include="Commands\UploadFolderSubOptions.cs" />
-    <Compile Include="Commands\UploadFileSubOptions.cs" />
+    <Compile Include="Commands\CreateDatasourcesVerbOptions.cs" />
+    <Compile Include="Commands\UploadFolderVerbOptions.cs" />
+    <Compile Include="Commands\UploadFileVerbOptions.cs" />
     <Compile Include="Commands\VerbNames.cs" />
+    <Compile Include="Commands\VerbOptionsBase.cs" />
     <Compile Include="Constants\ItemType.cs" />
+    <Compile Include="Exceptions\InvalidParameterException.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportService2010\IReportingService2010.generated.cs" />

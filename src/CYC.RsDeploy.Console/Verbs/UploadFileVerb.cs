@@ -7,21 +7,16 @@ namespace CYC.RsDeploy.Console.Verbs
 {
     public class UploadFileVerb : UploadVerbBase
     {
-        private readonly UploadFileSubOptions options;
+        private readonly UploadFileVerbOptions options;
         
-        public UploadFileVerb(UploadFileSubOptions options, ILogger logger) : base(logger, options.Server)
+        public UploadFileVerb(UploadFileVerbOptions options, ILogger logger) : base(logger, options.Server)
         {
             this.options = options;
         }
 
         public void Process()
         {
-            if (Path.GetExtension(options.File) != ".rdl")
-            {
-                throw new ArgumentException("Only .rdl files can be uploaded");
-            }
-
-            UploadFile(options.File, options.DestinationFolder, options.Server);
+            UploadFile(options.FilePath, options.DestinationFolderPath, options.Server);
         }
     }
 }
