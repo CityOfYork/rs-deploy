@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CYC.RsDeploy.Console", "src\CYC.RsDeploy.Console\CYC.RsDeploy.Console.csproj", "{403A972D-66B7-4CBF-B6E9-AEA2989808DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CYC.RsDeploy.Console.Tests", "test\CYC.RsDeploy.Console.Tests\CYC.RsDeploy.Console.Tests.csproj", "{DE8611C0-1A59-4EE0-8CFD-AF0305346612}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{403A972D-66B7-4CBF-B6E9-AEA2989808DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{403A972D-66B7-4CBF-B6E9-AEA2989808DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{403A972D-66B7-4CBF-B6E9-AEA2989808DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE8611C0-1A59-4EE0-8CFD-AF0305346612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE8611C0-1A59-4EE0-8CFD-AF0305346612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE8611C0-1A59-4EE0-8CFD-AF0305346612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE8611C0-1A59-4EE0-8CFD-AF0305346612}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
