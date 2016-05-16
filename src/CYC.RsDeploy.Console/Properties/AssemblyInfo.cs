@@ -35,7 +35,7 @@ using CommandLine;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.1.0.0")]
 [assembly: AssemblyFileVersion("1.1.0.0")]
-[assembly: AssemblyInformationalVersionAttribute("1.1.0-beta3")]
+[assembly: AssemblyInformationalVersion("1.1.0")]
 
 [assembly: AssemblyUsage(
     @"Usage: rsdeploy upload-file -f 'C:\folder.sub-folder.report.rdl' -d '/test' -s server",

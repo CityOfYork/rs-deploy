@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>RSDeploy</id>
-    <version>1.1.0-beta3</version>
+    <version>1.1.0</version>
     <title>RSDeploy</title>
     <authors>City Of York Council, Kevin Kuszyk</authors>
     <owners>CityOfYork, kevinkuszyk</owners>
