@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Linq;
+using System.IO;
 using CYC.RsDeploy.Console.Commands;
+using CYC.RsDeploy.Console.Exceptions;
 using CYC.RsDeploy.Console.ReportService2010;
 using NLog;
 
@@ -10,13 +12,13 @@ namespace CYC.RsDeploy.Console.Verbs
 {
     public class CreateDatasourcesVerb
     {
-        private readonly CreateDatasourcesSubOptions options;
+        private readonly CreateDatasourcesVerbOptions options;
         private readonly IReportingServiceChannelFactory channelFactory;
         private readonly ILogger logger;
 
         private string[] blackListedConnectionStrings = { "LocalSqlServer", "OraAspNetConString" };
 
-        public CreateDatasourcesVerb(CreateDatasourcesSubOptions options, ILogger logger)
+        public CreateDatasourcesVerb(CreateDatasourcesVerbOptions options, ILogger logger)
         {
             this.options = options;
             this.channelFactory = new ReportingServiceChannelFactory();
@@ -25,7 +27,9 @@ namespace CYC.RsDeploy.Console.Verbs
 
         public void Process()
         {
-            var config = LoadConfig(options.ConfigFile);
+            ValidateOptions();
+
+            var config = LoadConfig(options.ConfigFilePath);
 
             var url = String.Format("http://{0}/reportserver/ReportService2010.asmx", options.Server);
             var channel = channelFactory.Create(url);
@@ -41,20 +45,27 @@ namespace CYC.RsDeploy.Console.Verbs
                 
                 var builder = new SqlConnectionStringBuilder(connectionString.ConnectionString);
 
-                channel.CreateDataSource(new CreateDataSourceRequest
+                try
                 {
-                    DataSource = connectionString.Name,
-                    Definition = new DataSourceDefinition
+                    channel.CreateDataSource(new CreateDataSourceRequest
                     {
-                        ConnectString = String.Format("Data Source={0};Initial Catalog={1}", builder.DataSource, builder.InitialCatalog),
-                        UserName = builder.UserID,
-                        Password = builder.Password,
-                        Extension = "SQL",
-                        CredentialRetrieval = CredentialRetrievalEnum.Store,
-                    },
-                    Overwrite = true,
-                    Parent = options.DestinationFolder
-                });
+                        DataSource = connectionString.Name,
+                        Definition = new DataSourceDefinition
+                        {
+                            ConnectString = String.Format("Data Source={0};Initial Catalog={1}", builder.DataSource, builder.InitialCatalog),
+                            UserName = builder.UserID,
+                            Password = builder.Password,
+                            Extension = "SQL",
+                            CredentialRetrieval = CredentialRetrievalEnum.Store,
+                        },
+                        Overwrite = true,
+                        Parent = options.DestinationFolderPath
+                    });
+                }
+                catch(Exception ex)
+                {
+                    throw new InvalidParameterException(ex, $"Unable to create datasource for '{connectionString.Name}'");
+                }
             }
         }
 
@@ -62,6 +73,19 @@ namespace CYC.RsDeploy.Console.Verbs
         {
             var map = new ExeConfigurationFileMap { ExeConfigFilename = configFile };
             return ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
+        }
+
+        private void ValidateOptions()
+        {
+            if (Path.GetExtension(options.ConfigFilePath) != ".config")
+            {
+                throw new InvalidParameterException(new ArgumentException("Only a .config file can be uploaded"));
+            }
+
+            if (!File.Exists(options.ConfigFilePath))
+            {
+                throw new InvalidParameterException(new FileNotFoundException($"The file '{options.ConfigFilePath}' does not exist."));
+            }
         }
     }
 }

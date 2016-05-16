@@ -1,30 +1,40 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using CYC.RsDeploy.Console.Commands;
+using CYC.RsDeploy.Console.Exceptions;
 using NLog;
 
 namespace CYC.RsDeploy.Console.Verbs
 {
     public class UploadFolderVerb : UploadVerbBase
     {
-        private readonly UploadFolderSubOptions options;
+        private readonly UploadFolderVerbOptions options;
 
-        public UploadFolderVerb(UploadFolderSubOptions options, ILogger logger) : base (logger, options.Server)
+        public UploadFolderVerb(UploadFolderVerbOptions options, ILogger logger) : base (logger, options.Server)
         {
             this.options = options;
         }
 
         public void Process()
         {
-            var files = Directory.EnumerateFiles(options.Folder, "*.rdl").ToList();
-            
-            if (files.Any())
+            ValidateOptions();
+
+            options.SourceFiles.ToList().ForEach(file => UploadFile(file, options.DestinationFolderPath, options.Server));
+        }
+
+        private void ValidateOptions()
+        {
+            if (!Directory.Exists(options.SourceFolderPath))
             {
-                files.ForEach(file => UploadFile(file, options.DestinationFolder, options.Server));
+                throw new InvalidParameterException(new DirectoryNotFoundException($"The source folder '{options.SourceFolderPath}' does not exist."));
             }
-            else
+
+            options.SourceFiles = Directory.EnumerateFiles(options.SourceFolderPath, "*.rdl").ToList();
+
+            if (!options.SourceFiles.Any())
             {
-                logger.Info("No .rdl files found to upload in folder '{0}'", options.DestinationFolder);   
+                throw new InvalidParameterException(new Exception($"No .rdl files found in source folder '{options.SourceFolderPath}'."));
             }
         }
     }

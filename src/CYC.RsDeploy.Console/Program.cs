@@ -1,5 +1,7 @@
 ﻿using System;
+using CommandLine;
 using CYC.RsDeploy.Console.Commands;
+using CYC.RsDeploy.Console.Exceptions;
 using CYC.RsDeploy.Console.Verbs;
 using NLog;
 
@@ -12,14 +14,19 @@ namespace CYC.RsDeploy.Console
         static void Main(string[] args)
         {
             var options = new Options();
-            if (!CommandLine.Parser.Default.ParseArguments(args, options, OnVerb))
+            if (!Parser.Default.ParseArguments(args, options, OnVerb))
             {
-                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
+                Environment.Exit(Parser.DefaultExitCodeFail);
             }
         }
 
         static void OnVerb(string verb, object options)
         {
+            if (options == null)
+            {
+                Environment.Exit(Parser.DefaultExitCodeFail);
+            }
+
             try
             {
                 switch (verb)
@@ -37,30 +44,34 @@ namespace CYC.RsDeploy.Console
                         break;
                 }
             }
+            catch (InvalidParameterException ex)
+            {
+                logger.Info(ex.InnerException, ex.Message);
+                Environment.Exit(Parser.DefaultExitCodeFail);
+            }
             catch (Exception ex)
             {
                 logger.Error(ex);
-                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
+                Environment.Exit(Parser.DefaultExitCodeFail);
             }
-            
         }
 
         private static void UploadFile(object options)
         {
-            var uploadFileSubOptions = (UploadFileSubOptions)options;
-            new UploadFileVerb(uploadFileSubOptions, logger).Process(); 
+            var verbOptions = (UploadFileVerbOptions)options;
+            new UploadFileVerb(verbOptions, logger).Process();
         }
 
         private static void UploadFolder(object options)
         {
-            var uploadFileSubOptions = (UploadFolderSubOptions)options;
-            new UploadFolderVerb(uploadFileSubOptions, logger).Process();
+            var verbOptions = (UploadFolderVerbOptions)options;
+            new UploadFolderVerb(verbOptions, logger).Process();
         }
 
         private static void CreateDatasources(object options)
         {
-            var createDatasourcesSubOptions = (CreateDatasourcesSubOptions)options;
-            new CreateDatasourcesVerb(createDatasourcesSubOptions, logger).Process();
+            var verbOptions = (CreateDatasourcesVerbOptions)options;
+            new CreateDatasourcesVerb(verbOptions, logger).Process();
         }
     }
 }

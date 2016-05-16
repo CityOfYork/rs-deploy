@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.ServiceModel;
 using CYC.RsDeploy.Console.Constants;
+using CYC.RsDeploy.Console.Exceptions;
 using CYC.RsDeploy.Console.ReportService2010;
 using CYC.RsDeploy.Console.Services;
 using NLog;
@@ -32,14 +34,21 @@ namespace CYC.RsDeploy.Console.Verbs
 
             logger.Info("Uploading file '{0}' to '{1}/{2}' on report server '{3}'", file, parent, name, server);
 
-            channel.CreateCatalogItem(new CreateCatalogItemRequest
+            try
             {
-                Definition = fileService.GetBytes(file),
-                Name = name,
-                Parent = parent,
-                ItemType = ItemType.Report,
-                Overwrite = true
-            });
+                channel.CreateCatalogItem(new CreateCatalogItemRequest
+                {
+                    Definition = fileService.GetBytes(file),
+                    Name = name,
+                    Parent = parent,
+                    ItemType = ItemType.Report,
+                    Overwrite = true
+                });
+            }
+            catch(EndpointNotFoundException ex)
+            {
+                throw new InvalidParameterException(ex, $"There was no response from '{server}'");
+            }
 
             var itemPath = String.Format("{0}/{1}", parent, name);
 

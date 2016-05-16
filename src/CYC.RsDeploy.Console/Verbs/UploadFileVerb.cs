@@ -1,27 +1,38 @@
 ﻿using System;
 using System.IO;
 using CYC.RsDeploy.Console.Commands;
+using CYC.RsDeploy.Console.Exceptions;
 using NLog;
 
 namespace CYC.RsDeploy.Console.Verbs
 {
     public class UploadFileVerb : UploadVerbBase
     {
-        private readonly UploadFileSubOptions options;
+        private readonly UploadFileVerbOptions options;
         
-        public UploadFileVerb(UploadFileSubOptions options, ILogger logger) : base(logger, options.Server)
+        public UploadFileVerb(UploadFileVerbOptions options, ILogger logger) : base(logger, options.Server)
         {
             this.options = options;
         }
 
         public void Process()
         {
-            if (Path.GetExtension(options.File) != ".rdl")
+            ValidateOptions();
+
+            UploadFile(options.FilePath, options.DestinationFolderPath, options.Server);
+        }
+
+        private void ValidateOptions()
+        {
+            if (Path.GetExtension(options.FilePath) != ".rdl")
             {
-                throw new ArgumentException("Only .rdl files can be uploaded");
+                throw new InvalidParameterException(new ArgumentException("Only .rdl files can be uploaded"));
             }
 
-            UploadFile(options.File, options.DestinationFolder, options.Server);
+            if (!File.Exists(options.FilePath))
+            {
+                throw new InvalidParameterException(new FileNotFoundException($"The file '{options.FilePath}' does not exist."));
+            }
         }
     }
 }
