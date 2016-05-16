@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using CommandLine;
-using CYC.RsDeploy.Console.Exceptions;
+﻿using CommandLine;
 
 namespace CYC.RsDeploy.Console.Commands
 {
@@ -15,18 +12,5 @@ namespace CYC.RsDeploy.Console.Commands
 
         [Option('s', "server", Required = true, HelpText = "The report server to upload to.")]
         public string Server { get; set; }
-
-        public override void Validate()
-        {
-            if (Path.GetExtension(FilePath) != ".rdl")
-            {
-                throw new InvalidParameterException(new ArgumentException("Only .rdl files can be uploaded"));
-            }
-
-            if (!File.Exists(FilePath))
-            {
-                throw new InvalidParameterException(new FileNotFoundException($"The file \"{FilePath}\" does not exist."));
-            }
-        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.IO;
 using CYC.RsDeploy.Console.Commands;
 using CYC.RsDeploy.Console.Exceptions;
 using CYC.RsDeploy.Console.ReportService2010;
@@ -26,6 +27,8 @@ namespace CYC.RsDeploy.Console.Verbs
 
         public void Process()
         {
+            ValidateOptions();
+
             var config = LoadConfig(options.ConfigFilePath);
 
             var url = String.Format("http://{0}/reportserver/ReportService2010.asmx", options.Server);
@@ -70,6 +73,19 @@ namespace CYC.RsDeploy.Console.Verbs
         {
             var map = new ExeConfigurationFileMap { ExeConfigFilename = configFile };
             return ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
+        }
+
+        private void ValidateOptions()
+        {
+            if (Path.GetExtension(options.ConfigFilePath) != ".config")
+            {
+                throw new InvalidParameterException(new ArgumentException("Only a .config file can be uploaded"));
+            }
+
+            if (!File.Exists(options.ConfigFilePath))
+            {
+                throw new InvalidParameterException(new FileNotFoundException($"The file '{options.ConfigFilePath}' does not exist."));
+            }
         }
     }
 }

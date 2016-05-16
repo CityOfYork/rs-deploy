@@ -1,6 +1,7 @@
 ﻿using System;
 using CommandLine;
 using CYC.RsDeploy.Console.Commands;
+using CYC.RsDeploy.Console.Exceptions;
 using CYC.RsDeploy.Console.Verbs;
 using NLog;
 
@@ -42,6 +43,11 @@ namespace CYC.RsDeploy.Console
                         CreateDatasources(options);
                         break;
                 }
+            }
+            catch (InvalidParameterException ex)
+            {
+                logger.Info(ex.InnerException, ex.Message);
+                Environment.Exit(Parser.DefaultExitCodeFail);
             }
             catch (Exception ex)
             {

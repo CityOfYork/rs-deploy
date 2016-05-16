@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using CommandLine;
-using CYC.RsDeploy.Console.Exceptions;
+﻿using CommandLine;
 
 namespace CYC.RsDeploy.Console.Commands
 {
@@ -15,18 +12,5 @@ namespace CYC.RsDeploy.Console.Commands
 
         [Option('s', "server", Required = true, HelpText = "The report server to upload to.")]
         public string Server { get; set; }
-
-        public override void Validate()
-        {
-            if (Path.GetExtension(ConfigFilePath) != ".config")
-            {
-                throw new InvalidParameterException(new ArgumentException("Only a .config file can be uploaded"));
-            }
-
-            if (!File.Exists(ConfigFilePath))
-            {
-                throw new InvalidParameterException(new FileNotFoundException($"The file \"{ConfigFilePath}\" does not exist."));
-            }
-        }
     }
 }
